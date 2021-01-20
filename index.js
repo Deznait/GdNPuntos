@@ -1,37 +1,34 @@
 require('dotenv').config();
-const { Client, MessageEmbed } = require('discord.js');
+const Discord = require('discord.js');
+const googleSheet = require('./functions/google.js');
 
-const client = new Client();
-
+const client = new Discord.Client();
 const prefix = '!puntos';
 
 client.on('ready', () => {
-    console.log('Bot Now connected!');
-    console.log('Logged In as', client.user.tag)
-
-    // Bot sending a Message to a text channel called test
-    const testChannel = client.channels.cache.find(x => x.name === 'test-bots');
-    testChannel.send('Hello Server!');
-    // client.channels.find(c => c.name === 'test').send('Hello Server!')
+	console.log('Bot Now connected!');
+	console.log('Logged In as', client.user.tag);
 });
 
 // Bot listenning messages
 client.on('message', message => {
-    if (!message.content.startsWith(prefix) || message.author.bot) return;
+	if (!message.content.startsWith(prefix) || message.author.bot) return;
 
-    const args = message.content.trim().split(/ +/);
-    const command = args.shift().toLowerCase();
+	const args = message.content.trim().split(/ +/);
+	const command = args.shift().toLowerCase();
 
-    // No parameters
-    if (!args.length) {
-        message.channel.send(`¡${message.author}, tienes XX puntos acumulados!`);
-    } else if (args[0] === 'listar') {
-        message.reply('Lista completa de puntos')
-    } else if (args[0] === 'hola') {
-        message.channel.send(`Hola ${message.author}`);
-    }
+	// No parameters
+	if (!args.length) {
+		message.channel.send(`¡${message.author}, tienes XX puntos acumulados!`);
+	}
+	else if (args[0] === 'listar') {
+		message.reply('Lista completa de puntos');
+	}
+	else if (args[0] === 'hola') {
+		message.channel.send(`Hola ${message.author}`);
+	}
 
-    message.channel.send(`Command name: ${command}\nArguments: ${args}`);
+	message.channel.send(`Command name: ${command}\nArguments: ${args}`);
 });
 
 
