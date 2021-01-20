@@ -1,8 +1,6 @@
 require('dotenv').config();
 const Discord = require('discord.js');
 const googleSheet = require('./google.js');
-const { table } = require('table');
-const WordTable = require('word-table');
 
 const client = new Discord.Client();
 const prefix = '!puntos';
