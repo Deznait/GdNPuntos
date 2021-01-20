@@ -1,5 +1,5 @@
 # Custom
-.credentials.json
+config/
 .token.json
 .config.json
 
