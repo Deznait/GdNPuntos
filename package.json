@@ -3,8 +3,14 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "engines": {
+    "node": "12.x",
+    "npm": "*"
+  },
   "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "npx nodemon index.js",
+    "start": "node index.js",
     "pretest": "eslint --ignore-path .gitignore ."
   },
   "repository": {
