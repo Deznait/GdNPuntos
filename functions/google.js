@@ -50,6 +50,8 @@ async function getAllMembersData() {
 			});
 		}
 
+		/* Sort alphabetically */
+		/*
 		membersData.sort(function(a, b) {
 			if (a.total_points > b.total_points) {
 				return -1;
@@ -60,6 +62,7 @@ async function getAllMembersData() {
 			// a must be equal to b
 			return 0;
 		});
+		*/
 
 		return membersData;
 	}
