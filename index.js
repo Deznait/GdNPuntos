@@ -29,10 +29,10 @@ client.on('message', message => {
 			// No parameters, returns points of the user
 			google.getMemberData(nick).then(function(val) {
 				if(!val) {
-					sendMessage(`${message.author}, no te hemos encontrado en la lista de puntos. :sob:`, message);
+					sendMessage(`${message.author}, no te hemos encontrado en la lista de gremithos. :sob:`, message);
 				}
 				else {
-					sendMessage(`¡${message.author}, tienes ${val.total_points} puntos acumulados!`, message);
+					sendMessage(`¡${message.author}, tienes ${val.total_points} gremithos acumulados!`, message);
 				}
 			}, function(e) {
 				console.error(e);
@@ -41,12 +41,12 @@ client.on('message', message => {
 		else if (args[0] === 'detalle') {
 			google.getMemberData(nick).then(function(val) {
 				if(!val) {
-					sendMessage(`${message.author}, no te hemos encontrado en la lista de puntos. :sob:`, message);
+					sendMessage(`${message.author}, no te hemos encontrado en la lista de gremithos. :sob:`, message);
 				}
 				else {
 					const fields = [
-						{ name: 'Puntos totales', value: val.total_points, inline: true },
-						{ name: 'Puntos semanales', value: val.weekly_points, inline: true },
+						{ name: 'Gremithos totales', value: val.total_points, inline: true },
+						{ name: 'Gremithos semanales', value: val.weekly_points, inline: true },
 					];
 
 					if(val.interview) {
@@ -55,7 +55,7 @@ client.on('message', message => {
 
 					const embed = new Discord.MessageEmbed()
 						.setColor('#0099ff')
-						.setTitle(`Puntos de ${nick}`)
+						.setTitle(`Gremithos de ${nick}`)
 						.addFields(fields);
 					sendMessage(embed, message);
 				}
@@ -64,7 +64,7 @@ client.on('message', message => {
 			});
 		}
 		else if (args[0] === 'listar') {
-			// Listar la tabla completa de puntos
+			// Listar la tabla completa de gremithos
 			google.getAllMembersData().then(function(val) {
 				let output = '';
 
@@ -78,7 +78,7 @@ client.on('message', message => {
 			});
 		}
 		else {
-			// Recuperar los puntos de los miembros indicados
+			// Recuperar los gremithos de los miembros indicados
 			args.sort();
 
 			args.forEach(memberName => {
@@ -106,7 +106,7 @@ client.on('message', message => {
 				// No parameters, returns raider.io score of the user
 				google.getMemberData(nick).then(function(member) {
 					if(!member) {
-						sendMessage(`${message.author}, no te hemos encontrado en la lista de puntos. :sob:`, message);
+						sendMessage(`${message.author}, no te hemos encontrado en la lista de gremithos. :sob:`, message);
 					}
 					else {
 						console.log(member);
@@ -120,8 +120,8 @@ client.on('message', message => {
 								console.log('HAS MYTHICS');
 								console.log(top_mithic);
 								const fields = [
-									{ name: 'Puntos totales', value: member.total_points},
-									{ name: 'Puntos semanales', value: member.weekly_points},
+									{ name: 'Gremithos totales', value: member.total_points},
+									{ name: 'Gremithos semanales', value: member.weekly_points},
 								];
 
 								const embed = new Discord.MessageEmbed()
