@@ -1,5 +1,5 @@
 const { GoogleSpreadsheet } = require('google-spreadsheet');
-const cellsGrid = { startRowIndex: 3, endRowIndex: 50, startColumnIndex: 0, endColumnIndex: 18 };
+const cellsGrid = { startRowIndex: 3, endRowIndex: 50, startColumnIndex: 0, endColumnIndex: 23 };
 
 async function connect() {
 	// Responsible for accessing the spreadsheet
@@ -40,13 +40,16 @@ async function getAllMembersData() {
 
 			membersData.push({
 				name: sheet.getCell(rowIndex, 1).value,
+				realm: sheet.getCell(rowIndex, 22).value,
 				weekly_points: sheet.getCell(rowIndex, 7).value,
 				monthly_points_w1: sheet.getCell(rowIndex, 9).value,
 				monthly_points_w2: sheet.getCell(rowIndex, 10).value,
 				monthly_points_w3: sheet.getCell(rowIndex, 11).value,
 				monthly_points_w4: sheet.getCell(rowIndex, 12).value,
 				total_points: sheet.getCell(rowIndex, 14).value,
-				interview: (sheet.getCell(rowIndex, 16).value !== null) ? true : false,
+				mythic: (sheet.getCell(rowIndex, 16).value !== null) ? sheet.getCell(rowIndex, 16).value : false,
+				interview: (sheet.getCell(rowIndex, 18).value !== null) ? true : false,
+				loot: (sheet.getCell(rowIndex, 20).value !== null) ? true : false,
 			});
 		}
 
@@ -64,6 +67,9 @@ async function getAllMembersData() {
 		});
 		*/
 
+		if(process.env.DEV_MODE) {
+			console.log(membersData);
+		}
 		return membersData;
 	}
 	catch (e) {
