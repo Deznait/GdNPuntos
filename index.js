@@ -111,8 +111,8 @@ client.on('message', message => {
 					else {
 						console.log(member);
 						const realm = member.realm.replace(/'/g, '-');console.log(realm);
-						nodeRIO.Character.getMythicPlusWeeklyHighestRuns('eu', 'sanguino', 'Magumin').then((result) => {
-						// nodeRIO.Character.getMythicPlusWeeklyHighestRuns('eu', realm, member.name).then((result) => {
+						//nodeRIO.Character.getMythicPlusWeeklyHighestRuns('eu', 'sanguino', 'Magumin').then((result) => {
+						nodeRIO.Character.getMythicPlusWeeklyHighestRuns('eu', realm, member.name).then((result) => {
 							console.log(result);
 							const weekly_mithics = result.mythic_plus_weekly_highest_level_runs;
 							if (typeof weekly_mithics !== 'undefined' && weekly_mithics.length > 0) {
