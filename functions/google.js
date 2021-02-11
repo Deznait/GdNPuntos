@@ -67,7 +67,7 @@ async function getAllMembersData() {
 		});
 		*/
 
-		if(process.env.DEV_MODE) {
+		if(process.env.DEV_MODE === 'true') {
 			console.log(membersData);
 		}
 		return membersData;
