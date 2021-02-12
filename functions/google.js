@@ -1,5 +1,5 @@
 const { GoogleSpreadsheet } = require('google-spreadsheet');
-const cellsGrid = { startRowIndex: 3, endRowIndex: 50, startColumnIndex: 0, endColumnIndex: 23 };
+const cellsGrid = { startRowIndex: 3, endRowIndex: 50, startColumnIndex: 0, endColumnIndex: 30 };
 
 async function connect() {
 	// Responsible for accessing the spreadsheet
@@ -41,7 +41,8 @@ async function getAllMembersData() {
 			membersData.push({
 				index: rowIndex,
 				name: sheet.getCell(rowIndex, 1).value,
-				realm: sheet.getCell(rowIndex, 22).value,
+				shortname: sheet.getCell(rowIndex, 22).value,
+				realm: sheet.getCell(rowIndex, 23).value,
 				weekly_points: sheet.getCell(rowIndex, 7).value,
 				monthly_points_w1: sheet.getCell(rowIndex, 9).value,
 				monthly_points_w2: sheet.getCell(rowIndex, 10).value,
@@ -68,9 +69,6 @@ async function getAllMembersData() {
 		});
 		*/
 
-		if(process.env.DEV_MODE === 'true') {
-			console.log(membersData);
-		}
 		return membersData;
 	}
 	catch (e) {
@@ -83,6 +81,7 @@ async function getMemberData(memberName) {
 	const members = await getAllMembersData();
 
 	for (const [key, member] of Object.entries(members)) {
+		// Searchs for elements on the value list
 		if (Object.values(member).indexOf(memberName) > -1) {
 			return member;
 		}
