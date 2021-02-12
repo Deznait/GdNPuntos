@@ -39,6 +39,7 @@ async function getAllMembersData() {
 			if (sheet.getCell(rowIndex, 1).value === null) continue;
 
 			membersData.push({
+				index: rowIndex,
 				name: sheet.getCell(rowIndex, 1).value,
 				realm: sheet.getCell(rowIndex, 22).value,
 				weekly_points: sheet.getCell(rowIndex, 7).value,
@@ -90,7 +91,31 @@ async function getMemberData(memberName) {
 	return false;
 }
 
+async function saveMythicScore(memberName, mythicData) {
+	const members = await getAllMembersData();
+
+	for (const [key, member] of Object.entries(members)) {
+		if (Object.values(member).indexOf(memberName) > -1) {
+			const doc = await connect();
+
+			// Get first sheet of the document
+			const sheet = doc.sheetsByIndex[0];
+
+			// Loads a range of cells
+			await sheet.loadCells(cellsGrid);
+
+			const rawData = sheet.getCell(member.index, 16);
+
+			rawData.value = mythicData.mythic_level;
+			await sheet.saveUpdatedCells(); // save all updates in one call
+		}
+	}
+
+	return false;
+}
+
 module.exports = {
 	getMemberData,
 	getAllMembersData,
+	saveMythicScore,
 };

@@ -111,28 +111,29 @@ client.on('message', message => {
 					else {
 						console.log(member);
 						const realm = member.realm.replace(/'/g, '-');console.log(realm);
-						//nodeRIO.Character.getMythicPlusWeeklyHighestRuns('eu', 'sanguino', 'Magumin').then((result) => {
 						nodeRIO.Character.getMythicPlusWeeklyHighestRuns('eu', realm, member.name).then((result) => {
-							console.log(result);
 							const weekly_mithics = result.mythic_plus_weekly_highest_level_runs;
 							if (typeof weekly_mithics !== 'undefined' && weekly_mithics.length > 0) {
 								const top_mithic = weekly_mithics[Object.keys(weekly_mithics)[0]];
-								console.log('HAS MYTHICS');
-								console.log(top_mithic);
+
+								const mydate = new Date(top_mithic.clear_time_ms);
 								const fields = [
-									{ name: 'Gremithos totales', value: member.total_points},
-									{ name: 'Gremithos semanales', value: member.weekly_points},
+									{ name: 'Mazmorra', value: top_mithic.dungeon},
+									{ name: 'Tiempo', value: mydate.getMinutes() + ' minutos ' + mydate.getSeconds() + ' segundos'},
 								];
 
+								google.saveMythicScore(nick, top_mithic);
 								const embed = new Discord.MessageEmbed()
 									.setColor('#0099ff')
 									.setTitle(`¡${nick}, tu M+ más alta de esta semana ha sido +${top_mithic.mythic_level}!`)
 									.setThumbnail('https://images-ext-2.discordapp.net/external/ghxNNx7q-Dmw94AbS5yc1IWV2vrS8X9UtfdQ1W656WY/%3F2019-11-18/http/cdnassets.raider.io/images/fb_app_image.jpg?width=80&height=80')
-									.setURL(top_mithic.url);
+									.setAuthor('Raider.io')
+									.setURL(top_mithic.url)
+									.addFields(fields);
 								sendMessage(embed, message);
 							}
 							else{
-								sendMessage(`${message.author}, esta semana no has hecho ninguna mítica +. :sob:`, message);
+								sendMessage(`${message.author}, esta semana no has hecho ninguna M+. :sob:`, message);
 							}
 						});
 					}
