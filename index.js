@@ -81,16 +81,24 @@ client.on('message', message => {
 		}
 		else {
 			// Recuperar los gremithos de los miembros indicados
-			args.sort();
-
-			args.forEach(memberName => {
-				google.getMemberData(memberName).then(function(val) {
-					if(val) {
-						const output = `${val.name} - ${val.total_points}\n`;
-						sendMessage(output, message);
+			processMyArray(args).then(val => {
+				console.log(val);
+				val.sort(function(a, b) {
+					if (a.total_points > b.total_points) {
+						return -1;
 					}
-				}, function(e) {
-					console.error(e);
+					if (a.total_points < b.total_points) {
+						return 1;
+					}
+					// a must be equal to b
+					return 0;
+				});
+				console.log('');
+				console.log(val);
+
+				val.forEach(member => {
+					const output = `${member.name} - ${member.total_points}\n`;
+					sendMessage(output, message);
 				});
 			});
 		}
@@ -99,14 +107,14 @@ client.on('message', message => {
 
 		if (!args.length) {
 			// No parameters, returns raider.io score of the user
-			google.getMemberData(nick).then(function(member) {
+			google.getMemberData(nick).then(member => {
 				if(!member) {
 					sendMessage(`${message.author}, no te hemos encontrado en la lista de gremithos. :sob:`, message);
 				}
 				else {
 					sendRioMessage(member, message);
 				}
-			}, function(e) {
+			}, e => {
 				console.error(e);
 			});
 		}
@@ -118,9 +126,9 @@ client.on('message', message => {
 			message.member.roles.cache.some(role => role.name === 'Amo y señor')
 			) {
 				// No parameters, returns raider.io score of the user
-				google.getAllMembersData().then(function(val) {
+				google.getAllMembersData().then(val => {
 
-				}, function(e) {
+				}, e => {
 					console.error(e);
 				});
 			}
@@ -141,6 +149,17 @@ client.on('message', message => {
 		}
 	}
 });
+
+async function processMyArray(args) {
+	const memberList = [];
+
+	for(const memberName of args) {
+		const member = await google.getMemberData(memberName);
+		if (member) memberList.push(member);
+	}
+
+	return memberList;
+}
 
 function sendRioMessage(member, message) {
 	const realm = member.realm.replace(/'/g, '-');
