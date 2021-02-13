@@ -82,7 +82,6 @@ client.on('message', message => {
 		else {
 			// Recuperar los gremithos de los miembros indicados
 			processMyArray(args).then(val => {
-				console.log(val);
 				val.sort(function(a, b) {
 					if (a.total_points > b.total_points) {
 						return -1;
@@ -93,8 +92,6 @@ client.on('message', message => {
 					// a must be equal to b
 					return 0;
 				});
-				console.log('');
-				console.log(val);
 
 				val.forEach(member => {
 					const output = `${member.name} - ${member.total_points}\n`;
@@ -126,7 +123,6 @@ client.on('message', message => {
 			) {
 				// No parameters, returns raider.io score of the user
 				google.getAllMembersData().then(members => {
-					console.log(members);
 					for (const [key, member] of Object.entries(members)) {
 						sendRioMessage(member, message, false);
 					}
