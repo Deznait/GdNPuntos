@@ -110,7 +110,7 @@ client.on('message', message => {
 				console.error(e);
 			});
 		}
-		else if (args[0] === 'parse') {
+		else if (args[0] === 'guild') {
 			// Listar la tabla completa de semanales para todos los miembros
 			if (message.member.roles.cache.some(role => role.name === 'Guild Leader') ||
 			message.member.roles.cache.some(role => role.name === 'Oficial') ||
