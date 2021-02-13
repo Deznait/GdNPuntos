@@ -122,12 +122,15 @@ client.on('message', message => {
 			// Listar la tabla completa de semanales para todos los miembros
 			if (message.member.roles.cache.some(role => role.name === 'Guild Leader') ||
 			message.member.roles.cache.some(role => role.name === 'Oficial') ||
-			message.member.roles.cache.some(role => role.name === 'Moderador') ||
-			message.member.roles.cache.some(role => role.name === 'Amo y señor')
+			message.member.roles.cache.some(role => role.name === 'Moderador')
 			) {
 				// No parameters, returns raider.io score of the user
-				google.getAllMembersData().then(val => {
-
+				google.getAllMembersData().then(members => {
+					console.log(members);
+					for (const [key, member] of Object.entries(members)) {
+						sendRioMessage(member, message, false);
+					}
+					sendMessage('Se han actualizado las M+ semanales de todos los miembros', message);
 				}, e => {
 					console.error(e);
 				});
@@ -161,7 +164,7 @@ async function processMyArray(args) {
 	return memberList;
 }
 
-function sendRioMessage(member, message) {
+function sendRioMessage(member, message, sendmessage = true) {
 	const realm = member.realm.replace(/'/g, '-');
 
 	nodeRIO.Character.getMythicPlusWeeklyHighestRuns('eu', realm, member.name).then((result) => {
@@ -176,17 +179,19 @@ function sendRioMessage(member, message) {
 			];
 
 			google.saveMythicScore(member.name, top_mithic);
-			const embed = new Discord.MessageEmbed()
-				.setColor('#0099ff')
-				.setTitle(`¡${member.name}, tu M+ más alta de esta semana ha sido +${top_mithic.mythic_level}!`)
-				.setThumbnail('https://images-ext-2.discordapp.net/external/ghxNNx7q-Dmw94AbS5yc1IWV2vrS8X9UtfdQ1W656WY/%3F2019-11-18/http/cdnassets.raider.io/images/fb_app_image.jpg?width=80&height=80')
-				.setAuthor('Raider.io')
-				.setURL(top_mithic.url)
-				.addFields(fields);
-			sendMessage(embed, message);
+			if(sendmessage) {
+				const embed = new Discord.MessageEmbed()
+					.setColor('#0099ff')
+					.setTitle(`¡${member.name}, tu M+ más alta de esta semana ha sido +${top_mithic.mythic_level}!`)
+					.setThumbnail('https://images-ext-2.discordapp.net/external/ghxNNx7q-Dmw94AbS5yc1IWV2vrS8X9UtfdQ1W656WY/%3F2019-11-18/http/cdnassets.raider.io/images/fb_app_image.jpg?width=80&height=80')
+					.setAuthor('Raider.io')
+					.setURL(top_mithic.url)
+					.addFields(fields);
+				sendMessage(embed, message);
+			}
 		}
-		else{
-			sendMessage(`${message.author}, esta semana no has hecho ninguna M+. :sob:`, message);
+		else if(sendmessage) {
+			sendMessage(`${member.name}, esta semana no has hecho ninguna M+. :sob:`, message);
 		}
 	});
 }

@@ -106,7 +106,7 @@ async function saveMythicScore(memberName, mythicData) {
 			const rawData = sheet.getCell(member.index, 16);
 
 			rawData.value = mythicData.mythic_level;
-			await sheet.saveUpdatedCells(); // save all updates in one call
+			await sheet.saveUpdatedCells();
 		}
 	}
 
