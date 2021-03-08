@@ -79,11 +79,15 @@ async function getAllMembersData() {
 
 async function getMemberData(memberName) {
 	const members = await getAllMembersData();
+	console.log('memberName - ' + memberName);
 
 	for (const [key, member] of Object.entries(members)) {
+		console.log('getMemberData - ' + member.name);
+		console.log( memberName.localeCompare(member.name, undefined, { sensitivity: 'base' } ) );
 		// Searchs for elements on the value list
 		if (memberName.localeCompare(member.name, undefined, { sensitivity: 'base' }) === 0 ||
 		memberName.localeCompare(member.shortname, undefined, { sensitivity: 'base' }) === 0) {
+			console.log(member);
 			return member;
 		}
 	}
