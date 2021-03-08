@@ -82,7 +82,8 @@ async function getMemberData(memberName) {
 
 	for (const [key, member] of Object.entries(members)) {
 		// Searchs for elements on the value list
-		if (Object.values(member).indexOf(memberName) > -1) {
+		if (memberName.localeCompare(member.name, undefined, { sensitivity: 'base' }) === 0 ||
+		memberName.localeCompare(member.shortname, undefined, { sensitivity: 'base' }) === 0) {
 			return member;
 		}
 	}
