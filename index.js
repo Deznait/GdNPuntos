@@ -124,7 +124,7 @@ client.on('message', message => {
 				// No parameters, returns raider.io score of the user
 				google.getAllMembersData().then(members => {
 					for (const [key, member] of Object.entries(members)) {
-						sendRioMessage(member, message, false);
+						if(member.name !== 'INACTIVOS') {sendRioMessage(member, message, false);}
 					}
 					sendMessage('Se han actualizado las M+ semanales de todos los miembros', message);
 				}, e => {
@@ -167,11 +167,19 @@ function sendRioMessage(member, message, sendmessage = true) {
 		const weekly_mithics = result.mythic_plus_weekly_highest_level_runs;
 		if (typeof weekly_mithics !== 'undefined' && weekly_mithics.length > 0) {
 			const top_mithic = weekly_mithics[Object.keys(weekly_mithics)[0]];
-
 			const mydate = new Date(top_mithic.clear_time_ms);
+			const time_hours = mydate.getHours();
+			const time_minutes = mydate.getMinutes();
+			const time_seconds = mydate.getSeconds();
+
+			console.log(top_mithic);
+			let time = '';
+			time += (time_hours) ? time_hours + ' horas ' : '';
+			time += time_minutes + ' minutos ' + time_seconds + ' segundos';
+
 			const fields = [
 				{ name: 'Mazmorra', value: top_mithic.dungeon },
-				{ name: 'Tiempo', value: mydate.getMinutes() + ' minutos ' + mydate.getSeconds() + ' segundos' },
+				{ name: 'Tiempo', value: time },
 			];
 
 			google.saveMythicScore(member.name, top_mithic);
