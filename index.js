@@ -94,7 +94,7 @@ client.on('message', message => {
 				});
 
 				val.forEach(member => {
-					const output = `${member.name} - ${member.total_points}\n`;
+					const output = `${member.name}: ${member.total_points}\n`;
 					sendMessage(output, message);
 				});
 			});
