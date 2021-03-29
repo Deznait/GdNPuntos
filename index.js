@@ -71,7 +71,7 @@ client.on('message', message => {
 				let output = '';
 
 				val.forEach(data => {
-					output += `${data.name} - ${data.total_points}\n`;
+					output += `${data.name}: ${data.total_points}\n`;
 				});
 
 				sendMessage(output, message);
