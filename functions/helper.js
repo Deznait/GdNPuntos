@@ -1,5 +1,5 @@
 function sendMessage(text, message) {
-    console.log(process.env.DEV_MODE);
+	console.log(process.env.DEV_MODE);
 	if(process.env.DEV_MODE === 'true') {
 		console.log(text);
 	}

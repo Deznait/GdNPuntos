@@ -116,7 +116,7 @@ client.on('message', message => {
 			});
 		}
 		else if (args[0] === 'guild') {
-			// Listar la tabla completa de semanales para todos los miembros
+			// Listar la tabla completa semanal para todos los miembros
 			if (message.member.roles.cache.some(role => role.name === 'Guild Leader') ||
 			message.member.roles.cache.some(role => role.name === 'Oficial') ||
 			message.member.roles.cache.some(role => role.name === 'Moderador')
@@ -127,6 +127,22 @@ client.on('message', message => {
 						if(member.name !== 'INACTIVOS') {sendRioMessage(member, message, false);}
 					}
 					sendMessage('Se han actualizado las M+ semanales de todos los miembros', message);
+				}, e => {
+					console.error(e);
+				});
+			}
+		}
+		else if (args[0] === 'lastweek') {
+			// Listar la tabla completa de la semana anterior para todos los miembros
+			if (message.member.roles.cache.some(role => role.name === 'Guild Leader') ||
+			message.member.roles.cache.some(role => role.name === 'Oficial') ||
+			message.member.roles.cache.some(role => role.name === 'Moderador')
+			) {
+				// No parameters, returns raider.io score of the user
+				google.getAllMembersData().then(members => {
+					for (const [key, member] of Object.entries(members)) {
+						if(member.name !== 'INACTIVOS') {sendRioMessage(member, message, false, true);}
+					}
 				}, e => {
 					console.error(e);
 				});
@@ -160,44 +176,61 @@ async function processMyArray(args) {
 	return memberList;
 }
 
-function sendRioMessage(member, message, sendmessage = true) {
+function sendRioMessage(member, message, sendmessage = true, lastweek = false) {
 	const realm = member.realm.replace(/'/g, '-');
 
-	nodeRIO.Character.getMythicPlusWeeklyHighestRuns('eu', realm, member.name).then((result) => {
-		const weekly_mithics = result.mythic_plus_weekly_highest_level_runs;
-		if (typeof weekly_mithics !== 'undefined' && weekly_mithics.length > 0) {
-			const top_mithic = weekly_mithics[Object.keys(weekly_mithics)[0]];
-			const mydate = new Date(top_mithic.clear_time_ms);
-			const time_hours = mydate.getHours();
-			const time_minutes = mydate.getMinutes();
-			const time_seconds = mydate.getSeconds();
+	if(lastweek) {
+		console.log('LAST WEEK');
+		nodeRIO.Character.getMythicPlusPreviousWeekHighestRuns('eu', realm, member.name).then((result) => {
+			const weekly_mithics = result.mythic_plus_previous_weekly_highest_level_runs;
+			if (typeof weekly_mithics !== 'undefined' && weekly_mithics.length > 0) {
+				const top_mithic = weekly_mithics[Object.keys(weekly_mithics)[0]];
+				// console.log(top_mithic);
 
-			console.log(top_mithic);
-			let time = '';
-			time += (time_hours) ? time_hours + ' horas ' : '';
-			time += time_minutes + ' minutos ' + time_seconds + ' segundos';
-
-			const fields = [
-				{ name: 'Mazmorra', value: top_mithic.dungeon },
-				{ name: 'Tiempo', value: time },
-			];
-
-			google.saveMythicScore(member.name, top_mithic);
-			if(sendmessage) {
-				const embed = new Discord.MessageEmbed()
-					.setColor('#0099ff')
-					.setTitle(`¡${member.name}, tu M+ más alta de esta semana ha sido +${top_mithic.mythic_level}!`)
-					.setThumbnail('https://images-ext-2.discordapp.net/external/ghxNNx7q-Dmw94AbS5yc1IWV2vrS8X9UtfdQ1W656WY/%3F2019-11-18/http/cdnassets.raider.io/images/fb_app_image.jpg?width=80&height=80')
-					.setAuthor('Raider.io')
-					.setURL(top_mithic.url)
-					.addFields(fields);
-				sendMessage(embed, message);
+				google.saveMythicScore(member.name, top_mithic, true);
 			}
-		}
-		else if(sendmessage) {
-			sendMessage(`${member.name}, esta semana no has hecho ninguna M+. :sob:`, message);
-		}
-	});
+			else if(sendmessage) {
+				sendMessage(`${member.name}, esta semana no has hecho ninguna M+. :sob:`, message);
+			}
+		});
+	}
+	else{
+		nodeRIO.Character.getMythicPlusWeeklyHighestRuns('eu', realm, member.name).then((result) => {
+			const weekly_mithics = result.mythic_plus_weekly_highest_level_runs;
+			if (typeof weekly_mithics !== 'undefined' && weekly_mithics.length > 0) {
+				const top_mithic = weekly_mithics[Object.keys(weekly_mithics)[0]];
+				const mydate = new Date(top_mithic.clear_time_ms);
+				const time_hours = mydate.getHours();
+				const time_minutes = mydate.getMinutes();
+				const time_seconds = mydate.getSeconds();
+
+				console.log(top_mithic);
+				let time = '';
+				time += (time_hours) ? time_hours + ' horas ' : '';
+				time += time_minutes + ' minutos ' + time_seconds + ' segundos';
+
+				const fields = [
+					{ name: 'Mazmorra', value: top_mithic.dungeon },
+					{ name: 'Tiempo', value: time },
+				];
+
+				google.saveMythicScore(member.name, top_mithic);
+				if(sendmessage) {
+					const embed = new Discord.MessageEmbed()
+						.setColor('#0099ff')
+						.setTitle(`¡${member.name}, tu M+ más alta de esta semana ha sido +${top_mithic.mythic_level}!`)
+						.setThumbnail('https://images-ext-2.discordapp.net/external/ghxNNx7q-Dmw94AbS5yc1IWV2vrS8X9UtfdQ1W656WY/%3F2019-11-18/http/cdnassets.raider.io/images/fb_app_image.jpg?width=80&height=80')
+						.setAuthor('Raider.io')
+						.setURL(top_mithic.url)
+						.addFields(fields);
+					sendMessage(embed, message);
+				}
+			}
+			else if(sendmessage) {
+				sendMessage(`${member.name}, esta semana no has hecho ninguna M+. :sob:`, message);
+			}
+		});
+	}
 }
 
 function sendMessage(text, message) {
