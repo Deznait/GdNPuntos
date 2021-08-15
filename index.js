@@ -226,10 +226,10 @@ function sendRioMessage(member, message, sendmessage = true, lastweek = false) {
 				if (totalMythics > 0) {
 					let weeklyPoints = 0;
 
-					if (totalMythics > 0 && totalMythics < 3) {
+					if (totalMythics > 0 && totalMythics <= 3) {
 						weeklyPoints = 1;
 					}
-					else if (totalMythics >= 4 && totalMythics < 9) {
+					else if (totalMythics >= 4 && totalMythics <= 9) {
 						weeklyPoints = 2;
 					}
 					else if (totalMythics >= 10) {
