@@ -201,22 +201,7 @@ function sendRioMessage(member, message, sendmessage = true, lastweek = false) {
 						weeklyPoints = 3;
 					}
 
-					const fields = [
-						{ name: 'Niveles', value: weeklyRuns.join(', ') },
-						{ name: 'Puntos', value: weeklyPoints },
-					];
-
 					google.saveMythicScore(member.name, weeklyPoints, weeklyRuns, true);
-					if (sendmessage) {
-						const embed = new Discord.MessageEmbed()
-							.setColor('#0099ff')
-							.setTitle(`¡${member.name}, esta semana has hecho ${totalMythics} míticas! Eso son ${weeklyPoints} puntos`)
-							.setThumbnail('https://images-ext-2.discordapp.net/external/ghxNNx7q-Dmw94AbS5yc1IWV2vrS8X9UtfdQ1W656WY/%3F2019-11-18/http/cdnassets.raider.io/images/fb_app_image.jpg?width=80&height=80')
-							.setAuthor('Raider.io')
-							.setURL(result.profile_url)
-							.addFields(fields);
-						sendMessage(embed, message);
-					}
 				}
 				else if (sendmessage) {
 					sendMessage(`${member.name}, esta semana no has hecho ninguna M+ de nivel 15 o más. :sob:`, message);
@@ -253,14 +238,13 @@ function sendRioMessage(member, message, sendmessage = true, lastweek = false) {
 
 					const fields = [
 						{ name: 'Niveles', value: weeklyRuns.join(', ') },
-						{ name: 'Puntos', value: weeklyPoints },
 					];
 
 					google.saveMythicScore(member.name, weeklyPoints, weeklyRuns);
 					if (sendmessage) {
 						const embed = new Discord.MessageEmbed()
 							.setColor('#0099ff')
-							.setTitle(`¡${member.name}, esta semana has hecho ${totalMythics} míticas! Eso son ${weeklyPoints} puntos`)
+							.setTitle(`¡${member.name}, esta semana tienes ${weeklyPoints} puntos por míticas +15 o superiores!`)
 							.setThumbnail('https://images-ext-2.discordapp.net/external/ghxNNx7q-Dmw94AbS5yc1IWV2vrS8X9UtfdQ1W656WY/%3F2019-11-18/http/cdnassets.raider.io/images/fb_app_image.jpg?width=80&height=80')
 							.setAuthor('Raider.io')
 							.setURL(result.profile_url)
