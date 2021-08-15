@@ -20,7 +20,6 @@ client.on('message', message => {
 
 	const args = message.content.trim().split(/ +/);
 	const command = args.shift().toLowerCase();
-	console.log(command);
 
 	if (!commandList.includes(command)) return;
 
@@ -139,13 +138,13 @@ client.on('message', message => {
 			message.member.roles.cache.some(role => role.name === 'Moderador')
 			) {
 				// No parameters, returns raider.io score of the user
-				google.getAllMembersData().then(members => {
-					for (const [key, member] of Object.entries(members)) {
-						if(member.name !== 'INACTIVOS') {sendRioMessage(member, message, false, true);}
-					}
-				}, e => {
-					console.error(e);
-				});
+				// google.getAllMembersData().then(members => {
+				// 	for (const [key, member] of Object.entries(members)) {
+				// 		if(member.name !== 'INACTIVOS') {sendRioMessage(member, message, false, true);}
+				// 	}
+				// }, e => {
+				// 	console.error(e);
+				// });
 			}
 		}
 		else {
@@ -180,14 +179,48 @@ function sendRioMessage(member, message, sendmessage = true, lastweek = false) {
 	const realm = member.realm.replace(/'/g, '-');
 
 	if(lastweek) {
-		console.log('LAST WEEK');
 		nodeRIO.Character.getMythicPlusPreviousWeekHighestRuns('eu', realm, member.name).then((result) => {
 			const weekly_mithics = result.mythic_plus_previous_weekly_highest_level_runs;
 			if (typeof weekly_mithics !== 'undefined' && weekly_mithics.length > 0) {
-				const top_mithic = weekly_mithics[Object.keys(weekly_mithics)[0]];
-				// console.log(top_mithic);
+				const weeklyRuns = [];
+				weekly_mithics.forEach(function(mythicRun) {
+					const mythic_level = mythicRun.mythic_level;
+					if (mythic_level >= 15) weeklyRuns.push(mythic_level);
+				});
+				const totalMythics = weeklyRuns.length;
+				if (totalMythics > 0) {
+					let weeklyPoints = 0;
 
-				google.saveMythicScore(member.name, top_mithic, true);
+					if (totalMythics > 0 && totalMythics < 3) {
+						weeklyPoints = 1;
+					}
+					else if (totalMythics >= 4 && totalMythics < 9) {
+						weeklyPoints = 2;
+					}
+					else if (totalMythics >= 10) {
+						weeklyPoints = 3;
+					}
+
+					const fields = [
+						{ name: 'Niveles', value: weeklyRuns.join(', ') },
+						{ name: 'Puntos', value: weeklyPoints },
+					];
+
+					google.saveMythicScore(member.name, weeklyPoints, weeklyRuns, true);
+					if (sendmessage) {
+						const embed = new Discord.MessageEmbed()
+							.setColor('#0099ff')
+							.setTitle(`¡${member.name}, esta semana has hecho ${totalMythics} míticas! Eso son ${weeklyPoints} puntos`)
+							.setThumbnail('https://images-ext-2.discordapp.net/external/ghxNNx7q-Dmw94AbS5yc1IWV2vrS8X9UtfdQ1W656WY/%3F2019-11-18/http/cdnassets.raider.io/images/fb_app_image.jpg?width=80&height=80')
+							.setAuthor('Raider.io')
+							.setURL(result.profile_url)
+							.addFields(fields);
+						sendMessage(embed, message);
+					}
+				}
+				else if (sendmessage) {
+					sendMessage(`${member.name}, esta semana no has hecho ninguna M+ de nivel 15 o más. :sob:`, message);
+				}
 			}
 			else if(sendmessage) {
 				sendMessage(`${member.name}, esta semana no has hecho ninguna M+. :sob:`, message);
@@ -198,32 +231,45 @@ function sendRioMessage(member, message, sendmessage = true, lastweek = false) {
 		nodeRIO.Character.getMythicPlusWeeklyHighestRuns('eu', realm, member.name).then((result) => {
 			const weekly_mithics = result.mythic_plus_weekly_highest_level_runs;
 			if (typeof weekly_mithics !== 'undefined' && weekly_mithics.length > 0) {
-				const top_mithic = weekly_mithics[Object.keys(weekly_mithics)[0]];
-				const mydate = new Date(top_mithic.clear_time_ms);
-				const time_hours = mydate.getHours();
-				const time_minutes = mydate.getMinutes();
-				const time_seconds = mydate.getSeconds();
+				const weeklyRuns = [];
+				weekly_mithics.forEach(function(mythicRun) {
+					const mythic_level = mythicRun.mythic_level;
+					if (mythic_level >= 15) weeklyRuns.push(mythic_level);
+				});
+				const totalMythics = weeklyRuns.length;
 
-				console.log(top_mithic);
-				let time = '';
-				time += (time_hours) ? time_hours + ' horas ' : '';
-				time += time_minutes + ' minutos ' + time_seconds + ' segundos';
+				if (totalMythics > 0) {
+					let weeklyPoints = 0;
 
-				const fields = [
-					{ name: 'Mazmorra', value: top_mithic.dungeon },
-					{ name: 'Tiempo', value: time },
-				];
+					if (totalMythics > 0 && totalMythics < 3) {
+						weeklyPoints = 1;
+					}
+					else if (totalMythics >= 4 && totalMythics < 9) {
+						weeklyPoints = 2;
+					}
+					else if (totalMythics >= 10) {
+						weeklyPoints = 3;
+					}
 
-				google.saveMythicScore(member.name, top_mithic);
-				if(sendmessage) {
-					const embed = new Discord.MessageEmbed()
-						.setColor('#0099ff')
-						.setTitle(`¡${member.name}, tu M+ más alta de esta semana ha sido +${top_mithic.mythic_level}!`)
-						.setThumbnail('https://images-ext-2.discordapp.net/external/ghxNNx7q-Dmw94AbS5yc1IWV2vrS8X9UtfdQ1W656WY/%3F2019-11-18/http/cdnassets.raider.io/images/fb_app_image.jpg?width=80&height=80')
-						.setAuthor('Raider.io')
-						.setURL(top_mithic.url)
-						.addFields(fields);
-					sendMessage(embed, message);
+					const fields = [
+						{ name: 'Niveles', value: weeklyRuns.join(', ') },
+						{ name: 'Puntos', value: weeklyPoints },
+					];
+
+					google.saveMythicScore(member.name, weeklyPoints, weeklyRuns);
+					if (sendmessage) {
+						const embed = new Discord.MessageEmbed()
+							.setColor('#0099ff')
+							.setTitle(`¡${member.name}, esta semana has hecho ${totalMythics} míticas! Eso son ${weeklyPoints} puntos`)
+							.setThumbnail('https://images-ext-2.discordapp.net/external/ghxNNx7q-Dmw94AbS5yc1IWV2vrS8X9UtfdQ1W656WY/%3F2019-11-18/http/cdnassets.raider.io/images/fb_app_image.jpg?width=80&height=80')
+							.setAuthor('Raider.io')
+							.setURL(result.profile_url)
+							.addFields(fields);
+						sendMessage(embed, message);
+					}
+				}
+				else if (sendmessage) {
+					sendMessage(`${member.name}, esta semana no has hecho ninguna M+ de nivel 15 o más. :sob:`, message);
 				}
 			}
 			else if(sendmessage) {

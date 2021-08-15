@@ -105,7 +105,7 @@ async function getMemberData(memberName) {
 	return false;
 }
 
-async function saveMythicScore(memberName, mythicData, lastweek = false) {
+async function saveMythicScore(memberName, weeklyPoints, weeklyRuns, lastweek = false) {
 	const members = await getAllMembersData();
 
 	for (const [key, member] of Object.entries(members)) {
@@ -121,7 +121,7 @@ async function saveMythicScore(memberName, mythicData, lastweek = false) {
 			const mythic_cell = lastweek ? COLUMN_LASTWEEK_MYTHIC : COLUMN_MYTHIC;
 			const rawData = sheet.getCell(member.index, mythic_cell);
 
-			rawData.value = mythicData.mythic_level;
+			rawData.value = '+' + weeklyPoints + ' (' + weeklyRuns.join(', ') + ')';
 			await sheet.saveUpdatedCells();
 		}
 	}
