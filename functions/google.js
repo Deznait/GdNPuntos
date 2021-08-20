@@ -1,18 +1,14 @@
 const { GoogleSpreadsheet } = require('google-spreadsheet');
 const cellsGrid = { startRowIndex: 3, endRowIndex: 50, startColumnIndex: 0, endColumnIndex: 30 };
 const COLUMN_NAME = 1;
-const COLUMN_SHORTNAME = 22;
-const COLUMN_REALM = 23;
+const COLUMN_SHORTNAME = 16;
+const COLUMN_REALM = 17;
 const COLUMN_WEEKLY_POINTS = 7;
-const COLUMN_MONTHLY_POINTS_W1 = 9;
-const COLUMN_MONTHLY_POINTS_W2 = 10;
-const COLUMN_MONTHLY_POINTS_W3 = 11;
-const COLUMN_MONTHLY_POINTS_W4 = 12;
-const COLUMN_TOTAL_POINTS = 14;
-const COLUMN_MYTHIC = 16;
-const COLUMN_INTERVIEW = 18;
-const COLUMN_LOOT = 20;
-const COLUMN_LASTWEEK_MYTHIC = 25;
+const COLUMN_ATTENDANCE = 8;
+const COLUMN_TOTAL_POINTS = 10;
+const COLUMN_MYTHIC = 12;
+const COLUMN_LOOT = 14;
+const COLUMN_LASTWEEK_MYTHIC = 21;
 
 
 async function connect() {
@@ -58,13 +54,9 @@ async function getAllMembersData() {
 				shortname: sheet.getCell(rowIndex, COLUMN_SHORTNAME).value,
 				realm: sheet.getCell(rowIndex, COLUMN_REALM).value,
 				weekly_points: sheet.getCell(rowIndex, COLUMN_WEEKLY_POINTS).value,
-				monthly_points_w1: sheet.getCell(rowIndex, COLUMN_MONTHLY_POINTS_W1).value,
-				monthly_points_w2: sheet.getCell(rowIndex, COLUMN_MONTHLY_POINTS_W2).value,
-				monthly_points_w3: sheet.getCell(rowIndex, COLUMN_MONTHLY_POINTS_W3).value,
-				monthly_points_w4: sheet.getCell(rowIndex, COLUMN_MONTHLY_POINTS_W4).value,
 				total_points: sheet.getCell(rowIndex, COLUMN_TOTAL_POINTS).value,
+				attendance: sheet.getCell(rowIndex, COLUMN_ATTENDANCE).value,
 				mythic: (sheet.getCell(rowIndex, COLUMN_MYTHIC).value !== null) ? sheet.getCell(rowIndex, COLUMN_MYTHIC).value : false,
-				interview: (sheet.getCell(rowIndex, COLUMN_INTERVIEW).value !== null) ? true : false,
 				loot: (sheet.getCell(rowIndex, COLUMN_LOOT).value !== null) ? true : false,
 			});
 		}
@@ -97,7 +89,7 @@ async function getMemberData(memberName) {
 	for (const [key, member] of Object.entries(members)) {
 		// Searchs for elements on the value list
 		if (memberName.localeCompare(member.name, undefined, { sensitivity: 'base' }) === 0 ||
-		memberName.localeCompare(member.shortname, undefined, { sensitivity: 'base' }) === 0) {
+			memberName.localeCompare(member.shortname, undefined, { sensitivity: 'base' }) === 0) {
 			return member;
 		}
 	}
@@ -121,7 +113,8 @@ async function saveMythicScore(memberName, weeklyPoints, weeklyRuns, lastweek = 
 			const mythic_cell = lastweek ? COLUMN_LASTWEEK_MYTHIC : COLUMN_MYTHIC;
 			const rawData = sheet.getCell(member.index, mythic_cell);
 
-			rawData.value = '+' + weeklyPoints + ' (' + weeklyRuns.join(', ') + ')';
+			rawData.value = '+' + weeklyPoints;
+			rawData.note = '(' + weeklyRuns.join(', ') + ')';
 			await sheet.saveUpdatedCells();
 		}
 	}
