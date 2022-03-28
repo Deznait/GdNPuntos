@@ -179,7 +179,7 @@ function sendRioMessage(member, message, sendmessage = true, lastweek = false) {
 	const realm = member.realm.replace(/'/g, '-');
 
 	if(lastweek) {
-		nodeRIO.Character.getMythicPlusPreviousWeekHighestRuns('eu', realm, member.name).then((result) => {
+		nodeRIO.Character.getMythicPlusPreviousWeekHighestRuns('eu', realm, encodeURIComponent(member.name)).then((result) => {
 			const weekly_mithics = result.mythic_plus_previous_weekly_highest_level_runs;
 			if (typeof weekly_mithics !== 'undefined' && weekly_mithics.length > 0) {
 				const weeklyRuns = [];
@@ -213,7 +213,7 @@ function sendRioMessage(member, message, sendmessage = true, lastweek = false) {
 		});
 	}
 	else{
-		nodeRIO.Character.getMythicPlusWeeklyHighestRuns('eu', realm, member.name).then((result) => {
+		nodeRIO.Character.getMythicPlusWeeklyHighestRuns('eu', realm, encodeURIComponent(member.name)).then((result) => {
 			const weekly_mithics = result.mythic_plus_weekly_highest_level_runs;
 			if (typeof weekly_mithics !== 'undefined' && weekly_mithics.length > 0) {
 				const weeklyRuns = [];
