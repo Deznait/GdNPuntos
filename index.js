@@ -79,7 +79,9 @@ client.on('message', message => {
 			});
 		}
 		else if (args[0] === 'limpiar') {
-			message.channel.bulkDelete(100);
+			message.channel.bulkDelete(100)
+				.then(messages => console.log(`Bulk deleted ${messages.size} messages`))
+				.catch(console.error);
 		}
 		else {
 			// Recuperar los gremithos de los miembros indicados
