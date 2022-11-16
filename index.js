@@ -79,7 +79,7 @@ client.on('message', message => {
 			});
 		}
 		else if (args[0] === 'limpiar') {
-			message.channel.bulkDelete(100, true);
+			message.channel.bulkDelete(100);
 		}
 		else {
 			// Recuperar los gremithos de los miembros indicados
