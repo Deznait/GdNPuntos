@@ -99,6 +99,9 @@ client.on('message', message => {
 			});
 		}
 	}
+	else if (command === '!limpiar') {
+		if (message.author.username === 'Deznait') { message.channel.bulkDelete(500, true); }
+	}
 	else if(command === '!rio') {
 
 		if (!args.length) {
