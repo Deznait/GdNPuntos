@@ -78,6 +78,9 @@ client.on('message', message => {
 				console.error(e);
 			});
 		}
+		else if (args[0] === 'limpiar') {
+			message.channel.bulkDelete(100, true);
+		}
 		else {
 			// Recuperar los gremithos de los miembros indicados
 			processMyArray(args).then(val => {
@@ -98,9 +101,6 @@ client.on('message', message => {
 				});
 			});
 		}
-	}
-	else if (command === '!limpiar') {
-		message.channel.bulkDelete(500, true);
 	}
 	else if(command === '!rio') {
 
